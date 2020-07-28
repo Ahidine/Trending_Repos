@@ -1,7 +1,8 @@
 import React from 'react';
 import moment from 'moment';
 import Repository from './RepositoryComponent';
-import { getRepositoryFromAPI } from '../API/RespositoryAPI'
+import { getRepositoryFromAPI } from '../API/RespositoryAPI';
+import InfiniteScroll from 'react-infinite-scroll-component';
 class ListRepository extends React.Component {
 
     constructor(props) {
@@ -10,14 +11,24 @@ class ListRepository extends React.Component {
             repositoryData: [],
             page: 1,
             date: moment().subtract(30, 'days').format("YYYY-MM-DD"),
-            isLoaded : true
         };
+    }
+    loadMore = () => {
+        getRepositoryFromAPI(this.state.date, this.state.page).then((response) => {
+            this.setState({
+                repositoryData:this.state.repositoryData.concat(response.data.items),
+                page : this.state.page+1
+            });
+
+        }).catch((e) => {
+            console.log('erreur ' + e);
+        });
     }
     componentDidMount() {
         getRepositoryFromAPI(this.state.date, this.state.page).then((response) => {
             this.setState({
                 repositoryData: response.data.items,
-                isLoaded: false
+                page : this.state.page+1
             });
         }).catch((e) => {
             console.log('erreur ' + e);
@@ -38,18 +49,22 @@ class ListRepository extends React.Component {
     render() {
         const isLoaded = this.state.isLoaded;
         return (
-            
             <div >
-                {isLoaded ? this.renderLoading() : 
-                <div > 
-                {this.state.repositoryData.map((repo) =>
-                    <Repository key={repo.id} repositoryData={repo} date={this.state.date} />)
+            <InfiniteScroll
+                dataLength={this.state.repositoryData.length}
+                next={this.loadMore}
+                hasMore={true}
+                loader={this.renderLoading()}
+                endMessage={
+                    <p style={{ textAlign: 'center' }}>
+                        <b>Yay! You have seen it all</b>
+                    </p>
                 }
-                </div>
-                }
-            </div>
-                
-
+                >
+              { this.state.repositoryData.map((repo) =>
+            <Repository key={repo.id} repositoryData={repo} date={this.state.date} />)}
+            </InfiniteScroll>
+            </div>  
         );
 
 
