@@ -13,7 +13,9 @@ class ListRepository extends React.Component {
             date: moment().subtract(30, 'days').format("YYYY-MM-DD"),
         };
     }
+    //This function is used to load data from the API.
     loadMore = () => {
+        //an external function is used to communicate with the back end.
         getRepositoryFromAPI(this.state.date, this.state.page).then((response) => {
             this.setState({
                 repositoryData:this.state.repositoryData.concat(response.data.items),
@@ -24,6 +26,7 @@ class ListRepository extends React.Component {
             console.log('erreur ' + e);
         });
     }
+    //After mounting the component, the data from the first page is loaded.
     componentDidMount() {
         getRepositoryFromAPI(this.state.date, this.state.page).then((response) => {
             this.setState({
@@ -34,6 +37,8 @@ class ListRepository extends React.Component {
             console.log('erreur ' + e);
         });
     }
+    // this function is used  just to appear a loading GIF so that the user knows
+    // that the data is loading.
     renderLoading() {
         return (
             <div>

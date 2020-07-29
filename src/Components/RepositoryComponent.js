@@ -1,6 +1,7 @@
 import React from 'react';
 import { Row, Col, CardText, CardImg, CardBody, Card, Button } from "reactstrap";
 import moment from 'moment';
+// this component is only te presente the data with some design 
 class Repository extends React.Component {
     render() {
         const repo = this.props.repositoryData;
